@@ -1,10 +1,11 @@
-﻿using intus_test_backend.Configurations;
+﻿using Intus.Infrastructure.Configurations;
 
-namespace intus_test_backend.Extensions;
+namespace Intus.Api.Extensions;
 
 public static class ConfigurationExtensions
 {
-    public static IServiceCollection AddPathConfigurationInstance(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPathConfigurationInstance(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddSingleton(new PathConfiguration(
             configuration.GetSection("PathConfiguration")["UnixPath"],

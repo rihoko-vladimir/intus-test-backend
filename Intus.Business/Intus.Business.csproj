@@ -7,12 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Services" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Intus.Api\Intus.Api.csproj" />
-      <ProjectReference Include="..\Intus.Infrastructure\Intus.Infrastructure.csproj" />
+        <ProjectReference Include="..\Intus.Infrastructure\Intus.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

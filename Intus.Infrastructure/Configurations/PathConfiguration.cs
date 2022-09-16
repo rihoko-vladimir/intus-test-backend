@@ -1,3 +1,3 @@
-﻿namespace intus_test_backend.Configurations;
+﻿namespace Intus.Infrastructure.Configurations;
 
 public record PathConfiguration(string UnixPath, string DosPath);

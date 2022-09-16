@@ -1,13 +1,6 @@
-using intus_test_backend.Extensions;
-using Serilog;
+using Intus.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Host.UseSerilog((context, configuration) =>
-{
-    configuration.WriteTo.Console();
-    configuration.ReadFrom.Configuration(builder.Configuration);
-});
 
 // Add services to the container.
 
@@ -18,6 +11,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddPathConfigurationInstance(builder.Configuration);
 
+builder.Services.AddApplication();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,7 +22,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSerilogRequestLogging();
+app.UseCors(policyBuilder =>
+{
+    policyBuilder.AllowAnyOrigin();
+    policyBuilder.AllowAnyMethod();
+    policyBuilder.AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 
