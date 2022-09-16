@@ -21,59 +21,64 @@ public class FileRepository : IFileRepository
     {
         var serializedFile = JsonSerializer.Serialize(request);
 
-        StreamWriter fileStream;
-
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
             RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
         {
-            fileStream = File.CreateText(_pathConfiguration.UnixPath);
-
-            await fileStream.WriteAsync(serializedFile);
+            await File.WriteAllTextAsync(_pathConfiguration.UnixPath, serializedFile);
+            return;
         }
 
-        fileStream = File.CreateText(_pathConfiguration.DosPath);
-
-        await fileStream.WriteAsync(serializedFile);
+        await File.WriteAllTextAsync(_pathConfiguration.DosPath, serializedFile);
     }
 
     public async Task<RectangleDimensionsResponse> ReadFromFileAsync()
     {
+        var defaultValue = new RectangleDimensionsResponse
+        {
+            X = 32,
+            Y = 32,
+            Width = 500,
+            Height = 500
+        };
         string text;
         RectangleDimensionsResponse? response;
+        
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
             RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
         {
             if (!File.Exists(_pathConfiguration.UnixPath))
             {
-                return new RectangleDimensionsResponse
-                {
-                    X = 32,
-                    Y = 32,
-                    Width = 500,
-                    Height = 500
-                };
+                return defaultValue;
             }
             text = await File.ReadAllTextAsync(_pathConfiguration.UnixPath, Encoding.UTF8);
-            response = JsonSerializer.Deserialize<RectangleDimensionsResponse>(text);
+            try
+            {
+                response = JsonSerializer.Deserialize<RectangleDimensionsResponse>(text);
 
-            return response;
+                return response;
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
         }
         
         if (!File.Exists(_pathConfiguration.DosPath))
         {
-            return new RectangleDimensionsResponse
-            {
-                X = 32,
-                Y = 32,
-                Width = 500,
-                Height = 500
-            };
+            return defaultValue;
         }
 
         text = await File.ReadAllTextAsync(_pathConfiguration.DosPath, Encoding.UTF8);
 
-        response = JsonSerializer.Deserialize<RectangleDimensionsResponse>(text);
+        try
+        {
+            response = JsonSerializer.Deserialize<RectangleDimensionsResponse>(text);
 
-        return response;
+            return response;
+        }
+        catch (Exception)
+        {
+            return defaultValue;
+        }
     }
 }
